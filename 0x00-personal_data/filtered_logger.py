@@ -14,9 +14,8 @@ def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
     """ function that returns the log messag obfuscated"""
     for field in fields:
-        matchs = re.search(rf'{field}=(.*?){separator}', message)
-        if matchs:
-            pattern = re.sub(matchs.group(1), redaction, message, 1)
+        pattern = re.sub(f'{field}=(.*?){separator}',
+                         f'{field}={redaction}{separator}', message)
     return pattern
 
 
@@ -51,7 +50,7 @@ def get_logger() -> logging.Logger:
     return user_data
 
 
-def get_db():
+def get_db() -> mysql.connector.connection.MySQLConnection:
     """ function that returns a connector to the database"""
     host = os.getenv("PERSONAL_DATA_DB_HOST")
     if host is None:
