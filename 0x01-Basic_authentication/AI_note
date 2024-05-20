@@ -1,0 +1,35 @@
+# Basic authentication
+
+- Flask-HTTPAuth
+- What authentication means
+- What Base64 is
+- How to encode a string in Base64
+- What Basic authentication means
+- How to send the Authorization header 
+
+- Authorization
+- Directives
+- Basic
+- Digest
+
+- Flask
+
+- Basic authentication examples
+- Digest authentication example
+- Token Authentication Example
+- Using Multiple Authentication Schemes
+
+- Base16, Base32, Base64, Base85 Data Encodings
+
+- Simple-basic-API
+- Error handler: Unauthorized
+- Error handler: Forbidden
+-  Auth class
+- Define which routes don't need authentication
+- Request validation!
+- Basic auth
+- Basic - Base64 part
+- Basic - User credentials
+-  Basic - User object
+- Basic - Overload current_user - and BOOM!
+- 
