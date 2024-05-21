@@ -2,6 +2,8 @@
 """ Basic Authentication class"""
 
 from api.v1.auth.auth import Auth
+from typing import TypeVar
+from models.user import User
 import base64
 
 
@@ -32,3 +34,33 @@ class BasicAuth(Auth):
             return decoded_string
         except Exception:
             return None
+
+    def extract_user_credentials(
+            self, decoded_base64_authorization_header: str) -> (str, str):
+        """ Extract user credentials"""
+        if decoded_base64_authorization_header is None:
+            return None, None
+        if type(decoded_base64_authorization_header) is not str:
+            return None, None
+        if ':' not in decoded_base64_authorization_header:
+            return None, None
+        credentials = decoded_base64_authorization_header.split(':', 1)
+        return credentials[0], credentials[1]
+
+    def user_object_from_credentials(
+            self, user_email: str, user_pwd: str) -> TypeVar('User'):
+        """ User object from credentials"""
+        if user_email is None or type(user_email) is not str:
+            return None
+        if user_pwd is None or type(user_pwd) is not str:
+            return None
+        return User(user_email, user_pwd)
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """ Current user"""
+        auth_header = self.authorization_header(request)
+        base64_auth_hdr = self.extract_base64_authorization_header(auth_header)
+        dec_64_authHr = self.decode_base64_authorization_header(
+            base64_auth_hdr)
+        user_email, user_pwd = self.extract_user_credentials(dec_64_authHr)
+        return self.user_object_from_credentials(user_email, user_pwd)
