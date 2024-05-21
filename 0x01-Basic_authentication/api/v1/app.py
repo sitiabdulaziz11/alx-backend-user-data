@@ -25,12 +25,14 @@ def before_request() -> str:
     """ Before request handler"""
     if auth is None:
         return
-    notsubset_path = ['/api/v1/status/',
+    excluded_paths = ['/api/v1/status/',
                       '/api/v1/unauthorized/', '/api/v1/forbidden/']
 
-    if request.path not in notsubset_path:
+    if request.path not in excluded_paths:
         auth.require_auth(request)
-    if auth.authorization_header(request) is None:
+
+    auth_header = auth.authorization_header(request)
+    if auth_header is None:
         abort(401)
     if auth.current_user(request) is None:
         abort(403)
