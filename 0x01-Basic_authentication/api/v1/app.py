@@ -6,17 +6,23 @@ from os import getenv
 from api.v1.views import app_views
 from flask import Flask, jsonify, abort, request
 from flask_cors import (CORS, cross_origin)
+from api.v1.auth.basic_auth import BasicAuth
 from api.v1.auth.auth import Auth
+from logging import FileHandler, WARNING
 import os
 
 
 app = Flask(__name__)
+file_handler = FileHandler('errorlog.txt')
+file_handler.setLevel(WARNING)
 app.register_blueprint(app_views)
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 auth = None
 
-my_auth = os.environ.get('AUTH_TYPE', 'Basic')
-if my_auth == 'Basic':
+my_auth = os.environ.get('AUTH_TYPE')
+if my_auth == 'basic_auth':
+    auth = BasicAuth()
+else:
     auth = Auth()
 
 
@@ -25,14 +31,12 @@ def before_request() -> str:
     """ Before request handler"""
     if auth is None:
         return
-    excluded_paths = ['/api/v1/status/',
+    notsubset_path = ['/api/v1/status/',
                       '/api/v1/unauthorized/', '/api/v1/forbidden/']
 
-    if request.path not in excluded_paths:
-        auth.require_auth(request)
-
-    auth_header = auth.authorization_header(request)
-    if auth_header is None:
+    if auth.require_auth(request.path, notsubset_path) is False:
+        return
+    if auth.authorization_header(request) is None:
         abort(401)
     if auth.current_user(request) is None:
         abort(403)
