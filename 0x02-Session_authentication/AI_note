@@ -1,0 +1,19 @@
+# Session authentication
+
+- Cookie
+- Session
+
+- What authentication means
+- What session authentication means
+- What Cookies are
+- How to send Cookies
+- How to parse Cookies
+
+-  Empty session
+-  Create session
+- User ID for Session ID
+- Session cookie
+- Before request
+- Use Session ID for identifying a User
+- New view for Session Authentication
+- Logout
