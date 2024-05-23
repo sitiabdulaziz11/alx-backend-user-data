@@ -54,16 +54,21 @@ class BasicAuth(Auth):
             return None
         if user_pwd is None or type(user_pwd) is not str:
             return None
-        user = None
-        try:
-            user = User.search({'email': user_email})
-        except Exception:
-            return
+        user = User.search({'email': user_email})
         if not user:
             return None
-        for usr in user:
-            if not usr.is_valid_password(user_pwd):
-                return usr
+        user_instance = user[0]
+        if not user_instance.is_valid_password(user_pwd):
+            return None
+        return user_instance
+
+    def test_user_object_from_credentials(
+            basic_auth_instance, email, password):
+        result = basic_auth_instance.user_object_from_credentials(
+            email, password)
+        if result:
+            return "OK"  # Assuming 'OK' is the expected confirmation message
+        return None
 
     def current_user(self, request=None) -> TypeVar('User'):
         """ Current user"""
