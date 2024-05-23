@@ -64,6 +64,7 @@ class BasicAuth(Auth):
 
     def test_user_object_from_credentials(
             basic_auth_instance, email, password):
+        """ Test User object from credentials"""
         result = basic_auth_instance.user_object_from_credentials(
             email, password)
         if result:
