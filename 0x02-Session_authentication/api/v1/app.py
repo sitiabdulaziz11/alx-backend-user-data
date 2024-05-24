@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Route module for the API
+Route module for the Aplication interface program(API)
 """
 
 from os import getenv
@@ -62,7 +62,7 @@ def not_found(error) -> str:
 
 @app.errorhandler(401)
 def unauthorized(error) -> str:
-    """ Unauthorized handler"""
+    """ Unauthorized handler Method"""
     return jsonify({"error": "Unauthorized"}), 401
 
 
