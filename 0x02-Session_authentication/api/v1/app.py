@@ -33,19 +33,24 @@ else:
 @app.before_request
 def before_request() -> str:
     """ Before request handler"""
+    if auth:
+        setattr(request, 'current_user', auth.current_user(request))
     if auth is None:
         return
     notsubset_path = ['/api/v1/status/',
                       '/api/v1/unauthorized/', '/api/v1/forbidden/']
     notsubset_path.append('/api/v1/auth_session/login')
-    if auth.require_auth(request.path, notsubset_path) is False:
-        return
-    if auth.authorization_header(request) and auth. session_cookie(
-            request) is None:
-        abort(401)
-    request.current_user = auth.current_user(request)
-    if request.current_user is None:
-        abort(403)
+    try:
+        if auth.require_auth(request.path, notsubset_path) is False:
+            return None
+        if auth.authorization_header(request) and auth. session_cookie(
+                request) is None:
+            abort(401)
+        request.current_user = auth.current_user(request)
+        if request.current_user is None:
+            abort(403)
+    except Exception as e:
+        return None
 
 
 @app.errorhandler(404)
