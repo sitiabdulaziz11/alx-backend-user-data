@@ -32,7 +32,7 @@ else:
 
 @app.before_request
 def before_request() -> str:
-    """ Before request handler"""
+    """ Before request handler method"""
     if auth:
         setattr(request, 'current_user', auth.current_user(request))
     if auth is None:
@@ -55,7 +55,7 @@ def before_request() -> str:
 
 @app.errorhandler(404)
 def not_found(error) -> str:
-    """ Not found handler
+    """ Not found handler Method
     """
     return jsonify({"error": "Not found"}), 404
 
