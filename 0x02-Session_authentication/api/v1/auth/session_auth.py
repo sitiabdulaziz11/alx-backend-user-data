@@ -5,6 +5,7 @@
 from api.v1.auth.auth import Auth
 from models.user import User
 from uuid import uuid4
+import os
 
 
 class SessionAuth(Auth):
@@ -30,3 +31,31 @@ class SessionAuth(Auth):
         session_id = self.session_cookie(request)
         user_id = self.user_id_for_session_id(session_id)
         return User.get(user_id)
+
+    def destroy_session(self, request=None):
+        """ Destroy a Session ID"""
+        if request is None:
+            return False
+        session_name = os.environ.get('SESSION_NAME')
+        request_cookie = request.cookies.get(session_name)
+        if request_cookie is None:
+            return False
+        user_session_id = self.user_id_for_session_id(request_cookie)
+        if user_session_id is None:
+            return False
+        self.user_id_by_session_id.pop(user_session_id)
+        return True
+
+    def destroy_session(self, request=None):
+        """ Destroy a Session ID"""
+        if request is None:
+            return False
+        session_name = os.environ.get('SESSION_NAME')
+        request_cookie = request.cookies.get(session_name)
+        if request_cookie is None:
+            return False
+        user_session_id = self.user_id_for_session_id(request_cookie)
+        if user_session_id is None:
+            return False
+        self.user_id_by_session_id.pop(user_session_id)
+        return True
