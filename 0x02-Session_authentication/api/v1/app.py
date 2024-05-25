@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 """
-Route module for the Aplication interface program(API)
+Route module for the API
 """
-
 from os import getenv
 from api.v1.views import app_views
 from flask import Flask, jsonify, abort, request
 from flask_cors import (CORS, cross_origin)
 from api.v1.auth.basic_auth import BasicAuth
 from api.v1.auth.auth import Auth
-# from api.v1.auth.session_auth import SessionAuth
 from logging import FileHandler, WARNING
 import os
 
@@ -24,17 +22,13 @@ auth = None
 my_auth = os.environ.get('AUTH_TYPE')
 if my_auth == 'basic_auth':
     auth = BasicAuth()
-if my_auth == 'session_auth':
-    auth = SessionAuth()
 else:
     auth = Auth()
 
 
 @app.before_request
 def before_request() -> str:
-    """
-    Basic authentication for giving us access to all User endpoints
-    """
+    """ Before request handler"""
     if auth is None:
         return
     notsubset_path = ['/api/v1/status/',
@@ -44,40 +38,21 @@ def before_request() -> str:
         return
     if auth.authorization_header(request) is None:
         abort(401)
+    # if auth.current_user(request) is None:
+        # abort(403)
     request.current_user = auth.current_user(request)
-    if request.current_user is None:
-        abort(403)
-    # if auth:
-    # #     setattr(request, 'current_user', auth.current_user(request))
-    # if auth is None:
-    #     return
-    # notsubset_path = ['/api/v1/status/',
-    #                   '/api/v1/unauthorized/', '/api/v1/forbidden/']
-    # #notsubset_path.append('/api/v1/auth_session/login')
-    # try:
-    #     if auth.require_auth(request.path, notsubset_path) is False:
-    #         return None
-    #     if auth.authorization_header(request) and auth. session_cookie(
-    #             request) is None:
-    #         abort(401)
-    #     request.current_user = auth.current_user(request)
-    #     if request.current_user is None:
-    #         abort(403)
-    # except Exception as e:
-    #     return None
 
 
 @app.errorhandler(404)
 def not_found(error) -> str:
-    """
-    Not found handler Method
+    """ Not found handler
     """
     return jsonify({"error": "Not found"}), 404
 
 
 @app.errorhandler(401)
 def unauthorized(error) -> str:
-    """Unauthorized handler Method"""
+    """ Unauthorized handler"""
     return jsonify({"error": "Unauthorized"}), 401
 
 
