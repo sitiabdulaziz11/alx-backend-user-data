@@ -36,8 +36,7 @@ class SessionAuth(Auth):
         """ Destroy a Session ID"""
         if request is None:
             return False
-        session_name = os.environ.get('SESSION_NAME')
-        request_cookie = request.cookies.get(session_name)
+        request_cookie = request.cookies.get(request)
         if request_cookie is None:
             return False
         user_session_id = self.user_id_for_session_id(request_cookie)
