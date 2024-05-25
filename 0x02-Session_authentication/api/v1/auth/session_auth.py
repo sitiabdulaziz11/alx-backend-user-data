@@ -45,17 +45,3 @@ class SessionAuth(Auth):
             return False
         self.user_id_by_session_id.pop(user_session_id)
         return True
-
-    def destroy_session(self, request=None):
-        """ Destroy a Session ID"""
-        if request is None:
-            return False
-        session_name = os.environ.get('SESSION_NAME')
-        request_cookie = request.cookies.get(session_name)
-        if request_cookie is None:
-            return False
-        user_session_id = self.user_id_for_session_id(request_cookie)
-        if user_session_id is None:
-            return False
-        self.user_id_by_session_id.pop(user_session_id)
-        return True
