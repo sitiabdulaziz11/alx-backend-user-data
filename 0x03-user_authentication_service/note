@@ -1,0 +1,7 @@
+# if not email or not password:
+#             return False
+#         try:
+#             user = self._db.find_user_by(email=email)
+#         except NoResultFound:
+#             return False
+#         return bcrypt.checkpw(password.encode(), user.hashed_password)
