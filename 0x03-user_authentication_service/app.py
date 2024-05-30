@@ -2,7 +2,7 @@
 """Basic Flask app
 """
 
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, redirect
 from auth import Auth
 
 app = Flask(__name__)
@@ -48,9 +48,22 @@ def logout():
     if not user:
         abort(403)
     AUTH.destroy_session(user.id)
-    response = jsonify({"email": None, "message": "logged out"})
-    response.set_cookie("session_id", "")
-    return response
+    return redirect('/')
+
+
+@app.route('/profile', methods=['GET'], strict_slashes=False)
+def profile():
+    """ Get a profile"""
+    session_id = request.cookies.get('session_id')
+
+    if not session_id:
+        abort(403)
+
+    user = AUTH.get_user_from_session_id(session_id)
+
+    if user:
+        return jsonify({"email": user.email}), 200
+    abort(403)
 
 
 if __name__ == "__main__":
